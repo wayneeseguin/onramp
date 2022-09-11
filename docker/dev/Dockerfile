@@ -7,10 +7,8 @@ ENV PORT=9090
 
 WORKDIR /app
 
-#RUN apk add --no-cache ca-certificates bash
 COPY docker/dev/env /app/.env
 COPY ./bin/cmd /bin/cmd
-COPY ./bin/shell /bin/shell
 
 ENTRYPOINT ["/bin/cmd"]
 

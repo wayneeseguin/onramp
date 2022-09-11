@@ -34,6 +34,9 @@ shell:
 test:
 	./bin/docker tests
 
+onramp:
+	docker build -t onramp -f ./docker/onramp/Dockerfile .
+
 web:
 	open http://127.0.0.1:${PORT}
 

@@ -17,9 +17,7 @@ case "${cmd}" in
     cd src
     exec go test -v #./... 
     ;;
-  (*) 
-    fail "Unknown cmd '${cmd}'"
-    ;;
+  (*) /bin/onramp "$@" ;; # default is to run the app
 esac
 
 exit $?
