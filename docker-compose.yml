@@ -3,7 +3,7 @@ version: '3.9'
 services:
   postgres:
     stdin_open: true # docker run -i
-    tty: true        # docker run -t
+    tty:        true # docker run -t
     restart: on-failure
     container_name: onramp-pg
     domainname: postgres.onramp.com
@@ -20,7 +20,7 @@ services:
 
   dev:
     stdin_open: true # docker run -i
-    tty: true        # docker run -t
+    tty:        true # docker run -t
     restart: on-failure
     container_name: onramp-dev
     domainname: dev.onramp.com
@@ -29,12 +29,11 @@ services:
       context: .
       dockerfile: docker/dev/Dockerfile
     image: cosmtrek/air
-    command: "-c .air.toml"
-
+    command: "dev -c src/.air.toml"
     ports:
       - 9090:9090
     volumes:
-      - ./onramp:/app
+      - ./app:/app
 
 volumes:
   onramp-pg: {}

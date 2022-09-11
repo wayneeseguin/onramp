@@ -13,6 +13,9 @@ stop:
 build:
 	./bin/docker build
 
+logs:
+	./bin/docker logs
+
 parse:
 	./bin/docker parse
 
@@ -27,6 +30,9 @@ pshell:
 
 shell:
 	./bin/docker shell
+
+test:
+	./bin/docker tests
 
 web:
 	open http://127.0.0.1:${PORT}

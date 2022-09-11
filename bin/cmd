@@ -2,13 +2,24 @@
 
 cd /app
 
-source .env
+#source /app/.env
 
-case "$1" in
-  (pload) exec ./bin/load "$@"   ;;
-  (psql)  exec ./bin/psql "$@"   ;;
-  (shell) exec /bin/bash "$@"  ;;
-  (*)     exec ./bin/onramp "$@" ;;
+fail() { echo -e "$*" >&2 ; exit 1 ; }
+
+cmd="$1"
+shift || fail "Usage: $0 <command> <pgload|psql|shell|dev|tests>"
+case "${cmd}" in
+  (pload) exec ./bin/load "$@"  ;;
+  (psql)  exec ./bin/psql "$@"  ;;
+  (shell) exec /bin/bash "$@"   ;;
+  (dev)   exec /go/bin/air "$@" ;;
+  (tests)
+    cd src
+    exec go test -v #./... 
+    ;;
+  (*) 
+    fail "Unknown cmd '${cmd}'"
+    ;;
 esac
 
 exit $?
