@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 export PG_USERNAME="postgres"
-export PG_PASSWORD="0nr@up!"
+export PG_PASSWORD="onramp"
 export PG_HOSTNAME="postgres"
 export PG_DATABASE="postgres"
 export PG_PORT="5432"

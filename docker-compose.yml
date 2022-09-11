@@ -7,7 +7,7 @@ services:
     restart: on-failure
     container_name: onramp-pg
     domainname: postgres.onramp.com
-    hostname: onramp-pg
+    hostname: postgres
     build:
       context: .
       dockerfile: docker/postgres/Dockerfile
@@ -18,22 +18,23 @@ services:
     - ./sql:/app/sql
     - $HOME/.psql_history:/app/.psql_history
 
-  app:
+  dev:
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     restart: on-failure
-    container_name: onramp-app
-    domainname: app.onramp.com
-    hostname: onramp-app
+    container_name: onramp-dev
+    domainname: dev.onramp.com
+    hostname: dev
     build:
       context: .
-      dockerfile: docker/app/Dockerfile
-    image: onramp-app
-    ports:
-      - 12345:12345
+      dockerfile: docker/dev/Dockerfile
+    image: cosmtrek/air
+    command: "-c .air.toml"
 
+    ports:
+      - 9090:9090
     volumes:
-    - ./sql:/app/sql
+      - ./onramp:/app
 
 volumes:
   onramp-pg: {}
