@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+./bin/docker stop && echo "Stopped Docker PostgreSQL Service."
+
+exit $?

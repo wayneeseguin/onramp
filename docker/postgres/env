@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+export PG_USERNAME="${PG_USERNAME:-"postgres"}"
+export PG_PASSWORD="${POSTGRES_PASSWORD}" # <- inherited from env
+export PG_HOSTNAME="${PG_HOSTNAME:-"127.0.0.1"}"
+export schema="${PG_SCHEMA:="public"}"
+export PG_PORT=${PG_PORT:-"5432"}
+export PG_DATABASE=${PG_DATABASE:-"postgres"}
+export PG_URI="${PG_URI:="postgres://postgres@127.0.0.1:5432/postgres"}"
+#export PG_URI="${PG_URI:="postgres://${PG_USER}:${PG_PASS}@${PG_HOSTNAME}:${PG_PORT}/${PG_DATABASE}"}?options=--search-path%3D${PG_SCHEMA},public"
+
+set_schema() { 
+  case $1 in 
+    (public) export search_path="public" ;;
+    (*) export search_path="${1},public" ;;
+  esac
+}
+
+set_schema "${schema}"
+
+pg::psql() { 
+  exec \psql "${PG_URI}?options=--search-path%3D${search_path}" "${@}" ; 
+}
+
+pg::schemas() {
+  \psql "${PG_URI}" -t -c "
+  SELECT schema_name AS schema 
+  FROM information_schema.schemata 
+  WHERE NOT schema_name 
+  IN ('public','pg_catalog','pg_toast','information_schema');"
+}
+
+pg::ready() {
+  while ! pg_isready ; do sleep 5 ; done
+}
+
+pg::load::csv() {
+  local _schema="${1}"
+  local _file="${2}"
+  local _table="$(filename::table "${_file}")"
+  local columns=($(
+    pg::psql -t -c "
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE table_schema = '${schema}'
+    AND table_name   = '$(file::name ${file})}'
+    ORDER BY ordinal_position"
+  ))
+
+  local headers=${columns[*]}
+
+  pg::psql -c "
+  COPY ${schema}.${tableName} 
+  (\"${headers//${IFS:0:1}/\",\"}\")
+  FROM '${file}' DELIMITER ',' CSV HEADER QUOTE '\"' ESCAPE '''';
+  UPDATE ${_table} 
+  SET created_at = CURRENT_TIMESTAMP, effective_at = CURRENT_TIMESTAMP
+  WHERE created_at IS NULL;
+  "
+}
+
+pg::ext::create() {
+  local _ext="${1}"
+  pg::psql -c "CREATE EXTENSION IF NOT EXISTS ${_ext};"
+}
+
+pg::schema::create() {
+  local _schema="${1}"
+  pg::psql -c "CREATE SCHEMA IF NOT EXISTS ${_schema};"
+}
+
+list::schemas() {
+  find ./sql -type d -maxdepth 1 -mindepth 1 -exec basename {} \;
+}
+
+list::tables() {
+  local _schema="${1}"
+  find ./sql/${_schema}/tables -type d -maxdepth 1 -mindepth 1 -exec basename {} \;
+}
+
+list::functions() {
+  local _schema="${1}"
+  find ./sql/${_schema}/functions -type d -maxdepth 1 -mindepth 1 -exec basename {} \;
+}
+
+list::views() {
+  local _schema="${1}"
+  find ./sql/${_schema}/views -type d -maxdepth 1 -mindepth 1 -exec basename {} \;
+}
+
+log::info() {
+  echo -e "\e[32m[INFO]\e[0m ${1}\n$(printf '=%.0s' {1..80})"
+}
+
+list::files::sql() {
+  local _schema="${1}"
+  local _object="${2}"
+  find ./sql/${_schema}/${_object} -iname '*.sql' -type d -maxdepth 1 -mindepth 1 ;
+}
+
+list::files::data() {
+  local _schema="${1}"
+  local _object="${2}"
+  find ./sql/${_schema}/${_object} -iname '*.csv' -type d -maxdepth 1 -mindepth 1 ;
+}
+
+file::name() {
+  basename $file | cut -d'.' -f1
+}

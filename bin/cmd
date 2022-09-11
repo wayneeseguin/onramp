@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+cd /app
+
+source .env
+
+case "$1" in
+  (pload) exec ./bin/load "$@"   ;;
+  (psql)  exec ./bin/psql "$@"   ;;
+  (shell) exec /bin/bash "$@"  ;;
+  (*)     exec ./bin/onramp "$@" ;;
+esac
+
+exit $?

@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  postgres:
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    restart: on-failure
+    container_name: onramp-pg
+    domainname: postgres.onramp.com
+    hostname: onramp-pg
+    build:
+      context: .
+      dockerfile: docker/postgres/Dockerfile
+    shm_size: '2g'
+    image: onramp-postgres
+    volumes:
+    - onramp-pg:/var/lib/postgresql/data
+    - ./sql:/app/sql
+    - $HOME/.psql_history:/app/.psql_history
+
+  app:
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    restart: on-failure
+    container_name: onramp-app
+    domainname: app.onramp.com
+    hostname: onramp-app
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    image: onramp-app
+    ports:
+      - 12345:12345
+
+    volumes:
+    - ./sql:/app/sql
+
+volumes:
+  onramp-pg: {}
+

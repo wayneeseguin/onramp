@@ -1,0 +1,32 @@
+#!/bin/bash
+
+chmod_ln() { 
+  chmod 0766 "${installPath}/${cmd}"
+  ln -s "${installPath}/${1}" "/usr/local/bin/${1}"
+}
+
+install_cmd() {
+  cmd="$1" ; shift
+  url="$2" ; shift
+  echo "Installing \`${cmd}\`..."
+  eval "$@"
+  chmod_ln "${cmd}"
+}
+
+exec &> >(tee -a /build.log)
+set -vx
+
+installPath="/usr/local/bin" 
+
+jq_version="latest"
+yq_version="latest"
+fly_version="7.8.0"
+
+cmd=jq ; echo "Installing \`${cmd}\`..."
+url="https://github.com/stedolan/jq/releases/latest/download/jq-linux64"
+curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
+
+cmd=yq ; echo "Installing \`${cmd}\`..."
+url="https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
+curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
+

@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+source .env
+
+echo "Waiting for PostgreSQL server to boot up..."
+pg::ready
+
+for ext in $(cat sql/extensions)
+do log::info "Extension | CREATE ${ext} -> $( pg::ext::create "${ext}" )"
+done
+
+export PGOPTIONS='--schema-min-messages=warning' 
+schemas=($(list::schemas))
+for schema in ${schemas[@]}
+do # DDL
+  log::info "Schema ${schema} | Creating..."
+  if [[ ${schema} != "public" ]]
+  then
+    log::info "Schema | ${_schema} -> $( pg::schema::create ${_schema})"
+  fi
+
+  for obj in tables functions views
+  do
+    files=($(list::files::sql ${obj}))
+    for file in ${files[@]}
+    do # DDL
+      _name=$(file::name ${file})
+      log::info "Schema ${schema}.${_name} ->$(pg::psql -f ${file})"
+    done
+
+    # NOTE: CSV Data file must have the same header order as the actual table
+    case ${obj} in 
+      (tables)
+        files=($(list::files::data tables))
+        for file in ${files[@]}
+        do # DML
+          log::info "Schema ${schema}.${_name} ->$(pg::load::csv ${schema} ${file})"
+        done
+        ;;
+      (*)
+        true # NO DML for functions and views
+        ;;
+    esac
+  done
+done
+
+unset PGOPTIONS
+

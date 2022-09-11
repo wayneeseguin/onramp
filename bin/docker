@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+case "${1}" in
+  (start) exec docker compose up -d ;;
+  (stop) exec docker compose down -v ;;
+  (build) exec docker compose build --parallel ;;
+  (pload|psql|pshell) exec docker compose exec postgres /app/bin/cmd ${1} ;;
+  (shell) exec docker compose exec onramp /app/bin/cmd ${1} ;;
+esac
+
+exit $?
