@@ -4,27 +4,46 @@ import (
   "sort"
   "fmt"
   "os"
-  "net/http"
   "time"
+  "net/http"
+  "html/template"
+  "path/filepath"
 
   "context"
   "onramp/pg"
 )
 
 func rootHandler(w http.ResponseWriter, req *http.Request) {
-  var timestamp string
+  var (
+    err error
+    timestamp string
+  )
   stmt := "SELECT CURRENT_TIMESTAMP::varchar"
-  err := pg.DB.QueryRow(context.Background(), stmt).Scan(&timestamp)
+  err = pg.DB.QueryRow(context.Background(), stmt).Scan(&timestamp)
   if err != nil {
     fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
     return
   }
-  fmt.Fprintf(os.Stdout, "Request at postgres timestamp: %s\n", timestamp)
 
-  fmt.Fprintf(w, "<html><body><h1>%s</h1></body><footer>%s</footer></html>", "Hello, Business World!!!", timestamp)
+  p := filepath.Join(os.Getenv("APP_ROOT"),"public","html","onramp.html")
+  t, err := template.ParseFiles(p)
+  if err != nil {
+    fmt.Fprintf(os.Stderr, "template.ParseFiles err: %v", err)
+    return
+  }
+
+  t.Execute(w, struct { 
+    Message string
+    Timestamp string
+    PGTimestamp string 
+  } {
+    Message: "Hello, Business World!!!",
+    Timestamp: time.Now().Format(time.RFC3339),
+    PGTimestamp: timestamp,
+  })
 }
 
-func apiHeadersHandler(w http.ResponseWriter, req *http.Request) {
+func apiV1HeadersHandler(w http.ResponseWriter, req *http.Request) {
   timestamp := time.Now().Format(time.RFC3339)
 
   fmt.Fprintf(w, "<html><body><h1>Request Headers</h1><hr/><table><tr><th>Header</th><th>Value</th></tr>")
@@ -44,7 +63,7 @@ func apiHeadersHandler(w http.ResponseWriter, req *http.Request) {
 
 func Api() (err error) {
   http.HandleFunc("/", rootHandler)
-  http.HandleFunc("/api/v1/headers", apiHeadersHandler)
+  http.HandleFunc("/api/v1/headers", apiV1HeadersHandler)
 
   err = http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), nil)
   if err != nil {

@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
-./bin/docker stop && echo "Stopped Docker PostgreSQL Service."
+echo "Stopping Containers..."
+./bin/docker stop 
+
+echo "Cleaning up docker images..."
+iamges=$(docker images -a | awk '/onramp/{print $3}')
+if [[ ${#images[@]} -gt 0 ]]; then
+  docker rmi -f ${images[@]}
+fi
 
 exit $?

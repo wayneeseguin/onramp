@@ -12,7 +12,7 @@ services:
       context: .
       dockerfile: docker/postgres/Dockerfile
     shm_size: '2g'
-    image: onramp-postgres
+    image: "onramp/postgres"
     volumes:
     - onramp-pg:/var/lib/postgresql/data
     - ./sql:/app/sql
@@ -28,7 +28,7 @@ services:
     build:
       context: .
       dockerfile: docker/dev/Dockerfile
-    image: cosmtrek/air
+    image: "onramp/onramp"
     command: "dev -c src/.air.toml"
     ports:
       - 9090:9090

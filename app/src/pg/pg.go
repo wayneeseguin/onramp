@@ -9,7 +9,7 @@ import (
   //"github.com/jackc/pgx/v4/pgxpool"
   "github.com/jackc/pgx/v5"
   "github.com/jackc/pgx/v5/pgxpool"
-  //pgxUUID "github.com/vgarvardt/pgx-google-uuid/v4"
+  pgxUUID "github.com/vgarvardt/pgx-google-uuid/v5"
 )
 
 var (
@@ -26,7 +26,7 @@ func init() {
   }
 
   config.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
-    //pgxUUID.Register(conn.TypeMap())
+    pgxUUID.Register(conn.TypeMap())
     return nil
   }
 

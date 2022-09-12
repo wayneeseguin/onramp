@@ -8,8 +8,7 @@ import (
 )
 
 func main() {
-  err := api.Api()
-  if err != nil {
+  if err := api.Api() ; err != nil {
     fmt.Fprintf(os.Stderr, "api.Api() err: %v\n", err)
     os.Exit(1)
   }

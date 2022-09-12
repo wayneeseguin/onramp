@@ -5,7 +5,7 @@ case "${cmd}" in
   (start) exec docker compose up -d ;;
   (stop) exec docker compose down -v ;;
   (build) exec docker compose build --parallel ;;
-  (pload|psql|pshell) exec docker exec onramp-pg /bin/cmd ${cmd} ;;
+  (pload|psql|pshell) exec docker exec onramp-pg /app/bin/cmd ${cmd} ;;
   (shell) exec docker exec onramp-dev /bin/cmd ${cmd} ;;
   (tests) exec docker exec onramp-dev /bin/cmd ${cmd} ;;
   (logs) exec docker compose logs --tail 10 -f ;;

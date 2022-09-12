@@ -18,7 +18,7 @@ WORKDIR /app
 
 RUN echo '#!/usr/bin/env bash' > /app/.env
 
-COPY ./bin/cmd /bin/cmd
+COPY ./bin/cmd /app/bin/cmd
 
-ENTRYPOINT ["/bin/cmd"]
+ENTRYPOINT ["/app/bin/cmd"]
 
