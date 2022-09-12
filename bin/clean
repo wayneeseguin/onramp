@@ -9,4 +9,7 @@ if [[ ${#images[@]} -gt 0 ]]; then
   docker rmi -f ${images[@]}
 fi
 
+rm -f app/src/tmp/*
+rmdir app/src/tmp
+
 exit $?

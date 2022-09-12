@@ -11,7 +11,22 @@ import (
 
   "context"
   "onramp/pg"
+
+	//"github.com/BurntSushi/toml"
+	//"github.com/nicksnyder/go-i18n/v2/i18n"
+	//"golang.org/x/text/language"
+
 )
+
+var (
+  //bundle = *i18n.Bundle
+)
+
+func init() {
+  //bundle := i18n.NewBundle(language.English)
+	//bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	//bundle.MustLoadMessageFile("active.zh.toml")
+}
 
 func rootHandler(w http.ResponseWriter, req *http.Request) {
   var (
@@ -25,14 +40,23 @@ func rootHandler(w http.ResponseWriter, req *http.Request) {
     return
   }
 
-  p := filepath.Join(os.Getenv("APP_ROOT"),"public","html","onramp.html")
-  t, err := template.ParseFiles(p)
+  //accept := request.Header.Get("Accept-Language")
+  //if r.FormValue("lang") != "" {
+  //  lang := r.FormValue("lang")
+  //} else {
+  //  lang := langauge.English.String() //"en"
+  //}
+  //localizer := i18n.NewLocalizer(bundle, language.English.String(), accept)
+  // TODO: ^^^ use init()to set the language for the template, "en" vvv
+
+  p := filepath.Join(os.Getenv("APP_ROOT"),"public","en","html","root.html")
+  tpl, err := template.ParseFiles(p)
   if err != nil {
     fmt.Fprintf(os.Stderr, "template.ParseFiles err: %v", err)
     return
   }
 
-  t.Execute(w, struct { 
+  tpl.Execute(w, struct { 
     Message string
     Timestamp string
     PGTimestamp string 
