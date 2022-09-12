@@ -1,4 +1,18 @@
-<html>
+<!doctype html>
+<html lang="{{.Lang}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta property="og:author" name="author" content="OnRamp">
+    <meta property="og:description" content="OnRamp Business Application.">
+    <meta property="og:image" content="image.png">
+    <meta property="og:title" content="OnRamp for Business">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://onramp.com/">
+    <link href="css/root.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>OnRamp</title>
+  </head>
   <body>
     <h1>Request Headers</h1>
     <hr/>
@@ -14,3 +28,4 @@
     <div>processed_at: {{.Timestamp}}</div>
   </footer>
 </html>
+<script src="root.js"></script>

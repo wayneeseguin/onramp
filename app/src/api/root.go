@@ -44,10 +44,12 @@ func rootHandler(w http.ResponseWriter, req *http.Request) {
     Message string
     Timestamp string
     PGTimestamp string 
+    Lang string
   } {
     Message: "Hello, Business World!!!",
     Timestamp: time.Now().Format(time.RFC3339),
     PGTimestamp: timestamp,
+    Lang: "en", // For now
   })
 }
 

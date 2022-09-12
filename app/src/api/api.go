@@ -22,9 +22,12 @@ func init() {
 	//bundle.MustLoadMessageFile("active.zh.toml")
 }
 
+// NOTE: https://ogp.me/
 func Api() (err error) {
-  http.HandleFunc("/", rootHandler)
   http.HandleFunc("/api/v1/headers", apiV1HeadersHandler)
+  http.HandleFunc("/js", jsHandler)
+  http.HandleFunc("/css", cssHandler)
+  http.HandleFunc("/", rootHandler)
 
   err = http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), nil)
   if err != nil {

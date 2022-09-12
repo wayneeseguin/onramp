@@ -1,4 +1,19 @@
-<html>
+<!doctype html>
+<html lang="{{.Lang}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:author" name="author" content="OnRamp">
+    <meta property="og:description" content="OnRamp Business Application.">
+    <meta property="og:image" content="image.png">
+    <meta property="og:title" content="OnRamp for Business">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://onramp.com/">
+    <link rel="stylesheet" type="text/css" href="css/styles.css?v=1.0">
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>OnRamp</title>
+  </head>
   <body>
     <h1>{{.Message}}</h1>
   </body>
@@ -7,3 +22,4 @@
     <div>PG Timestamp: {{.PGTimestamp}}</div>
   </footer>
 </html>
+<script src="js/root.js"></script>
