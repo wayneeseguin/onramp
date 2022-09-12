@@ -9,6 +9,17 @@ Currently configuraton for the application is expected to come from env vars:
 
 - `PG_URI` for the postgres database URI
 
+# Onramp Image
+
+The docker image `onramp:latest` is build by
+
+```sh
+make onramp
+```
+
+which will locally build an `onramp:latest` container image that can then 
+be tagged and pushed to a registry.
+
 # Dev
 
 ```sh
@@ -22,7 +33,7 @@ make logs
 
 ## Development
 
-### Env Vars
+### Dev Container Env Vars
 ```
 GOLANG_VERSION => 1.19
 GOPATH => /go
