@@ -1,0 +1,16 @@
+<html>
+  <body>
+    <h1>Request Headers</h1>
+    <hr/>
+      <table>
+        <tr><th>Header</th><th>Value</th></tr>
+        {{ range $key, $value := .Headers }}
+        <tr><td>{{ $key }}</td><td>{{ $value }}</td></tr>
+        {{ end }}
+      </table>
+  </body>
+  <hr/>
+  <footer>
+    <div>processed_at: {{.Timestamp}}</div>
+  </footer>
+</html>

@@ -12,10 +12,11 @@ import (
   "context"
   "onramp/pg"
 
+  // i18n/l10n:
 	//"github.com/BurntSushi/toml"
 	//"github.com/nicksnyder/go-i18n/v2/i18n"
 	//"golang.org/x/text/language"
-
+  // TODO: Check out https://github.com/vorlif/spreak
 )
 
 var (
@@ -70,19 +71,32 @@ func rootHandler(w http.ResponseWriter, req *http.Request) {
 func apiV1HeadersHandler(w http.ResponseWriter, req *http.Request) {
   timestamp := time.Now().Format(time.RFC3339)
 
-  fmt.Fprintf(w, "<html><body><h1>Request Headers</h1><hr/><table><tr><th>Header</th><th>Value</th></tr>")
-
   headerKeys := make([]string, 0, len(req.Header))
   for name := range req.Header {
     headerKeys = append(headerKeys, name)
   }
   sort.Strings(headerKeys)
+  headers := make(map[string]string)
   for _, k := range headerKeys {
-    for _,h := range req.Header[k] {
-      fmt.Fprintf(w, "<tr><td>%v</td><td>%v</td></tr>", k, h) //req.Header[k])
+    for _,v := range req.Header[k] {
+      headers[k] = v
     }
   }
-  fmt.Fprintf(w, "</table></body><hr/><footer><div>processed_at: %s</div></footer></html>", timestamp)
+
+  p := filepath.Join(os.Getenv("APP_ROOT"),"public","en","html","v1_headers.html")
+  tpl, err := template.ParseFiles(p)
+  if err != nil {
+    fmt.Fprintf(os.Stderr, "template.ParseFiles err: %v", err)
+    return
+  }
+
+  tpl.Execute(w, struct { 
+    Headers map[string]string
+    Timestamp string
+  } {
+    Headers: headers,
+    Timestamp: timestamp,
+  })
 }
 
 func Api() (err error) {
